@@ -34,7 +34,6 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 			serialized_org = serializer.data
 
 		return Response(serialized_org, status=org_status)
-
 	 	
 
 	def get_info_github_api_organization(self, login: str) -> (dict, int):
@@ -60,3 +59,10 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 			data["score"] = len(public_members_response.json()) + org_data["public_repos"]
 
 		return data, org_status
+
+	def list(self, request):
+
+		orgs = models.Organization.objects.all().order_by('-score')
+		serializer = self.serializer_class(orgs, many=True)
+
+		return Response(serializer.data)
