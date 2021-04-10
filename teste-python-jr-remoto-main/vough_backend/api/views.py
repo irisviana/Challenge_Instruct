@@ -61,6 +61,10 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 		return data, org_status
 
 	def list(self, request):
+		
+		"""
+		Retornar os dados de organizações ordenados pelo score na listagem da API
+		"""
 
 		orgs = models.Organization.objects.all().order_by('-score')
 		serializer = self.serializer_class(orgs, many=True)
