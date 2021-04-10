@@ -44,7 +44,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         
 		github = GithubApi()
 		org_response = github.get_organization(login)
-		public_members_response = github.get_organization_public_members(login)
+		public_members = github.get_organization_public_members(login)
 		org_data = org_response.json()
 		org_status= org_response.status_code
 		data = {}
@@ -56,7 +56,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 			if("name" in org_data):
 				data["name"] = org_data["name"]
   
-			data["score"] = len(public_members_response.json()) + org_data["public_repos"]
+			data["score"] = len(public_members) + org_data["public_repos"]
 
 		return data, org_status
 
