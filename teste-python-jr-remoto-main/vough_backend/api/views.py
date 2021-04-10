@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import Response
 from api import models, serializers
 from api.integrations.github import GithubApi
-
+from django.db import IntegrityError
 # TODOS:
 # 1 - Buscar organização pelo login através da API do Github
 # 2 - Armazenar os dados atualizados da organização no banco
@@ -12,10 +12,12 @@ from api.integrations.github import GithubApi
 
 class OrganizationViewSet(viewsets.ModelViewSet):
 
-	queryset = models.Organization.objects.all()
+	#queryset = models.Organization.objects.all()
 	serializer_class = serializers.OrganizationSerializer
 	lookup_field = "login"
 	http_method_names = ["get","delete"]
+
+
 
 	def retrieve(self, request, login=None):
 		"""
@@ -28,12 +30,26 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 		serialized_org = {}
   
 		if (org_status==200):
+			try:
+				org =  models.Organization.objects.get(pk=org_inf['login'])
+				org.score = org_inf['score']
+				org.name = org_inf['name']
+				org.save()
+				
+			except models.Organization.DoesNotExist :
+				org= models.Organization.objects.create(**org_inf)
 
-			org, _ = models.Organization.objects.update_or_create(**org_inf)
 			serializer = self.serializer_class(org)
 			serialized_org = serializer.data
 
 		return Response(serialized_org, status=org_status)
+
+	def get_queryset(self):
+		"""
+			Retornar os dados de organizações ordenados pelo score na listagem da API
+		"""
+		
+		return models.Organization.objects.all().order_by('-score')
 	 	
 
 	def get_info_github_api_organization(self, login: str) -> (dict, int):
@@ -55,18 +71,10 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
 			if("name" in org_data):
 				data["name"] = org_data["name"]
+
+			else:
+				data["name"]=""
   
 			data["score"] = len(public_members) + org_data["public_repos"]
 
 		return data, org_status
-
-	def list(self, request):
-		
-		"""
-		Retornar os dados de organizações ordenados pelo score na listagem da API
-		"""
-
-		orgs = models.Organization.objects.all().order_by('-score')
-		serializer = self.serializer_class(orgs, many=True)
-
-		return Response(serializer.data)
