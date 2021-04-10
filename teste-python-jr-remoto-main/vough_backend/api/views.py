@@ -1,6 +1,6 @@
+
 from rest_framework import viewsets, status
 from rest_framework.views import Response
-
 from api import models, serializers
 from api.integrations.github import GithubApi
 
@@ -10,12 +10,53 @@ from api.integrations.github import GithubApi
 # 3 - Retornar corretamente os dados da organização
 # 4 - Retornar os dados de organizações ordenados pelo score na listagem da API
 
-
 class OrganizationViewSet(viewsets.ModelViewSet):
 
-    queryset = models.Organization.objects.all()
-    serializer_class = serializers.OrganizationSerializer
-    lookup_field = "login"
+	queryset = models.Organization.objects.all()
+	serializer_class = serializers.OrganizationSerializer
+	lookup_field = "login"
+	http_method_names = ["get","delete"]
 
-    def retrieve(self, request, login=None):
-        return Response({})
+	def retrieve(self, request, login=None):
+		"""
+		   Armazenar os dados atualizados da organização no banco e
+
+		   Retornar corretamente os dados da organização
+        """
+
+		org_inf, org_status = self.get_info_github_api_organization(login)
+		serialized_org = {}
+  
+		if (org_status==200):
+
+			org, _ = models.Organization.objects.update_or_create(**org_inf)
+			serializer = self.serializer_class(org)
+			serialized_org = serializer.data
+
+		return Response(serialized_org, status=org_status)
+
+	 	
+
+	def get_info_github_api_organization(self, login: str) -> (dict, int):
+		"""Buscar organização e mebros da organização pelo login através da API do Github
+
+        :login: login da organização no Github
+        """
+        
+		github = GithubApi()
+		org_response = github.get_organization(login)
+		public_members_response = github.get_organization_public_members(login)
+		org_data = org_response.json()
+		org_status= org_response.status_code
+		data = {}
+
+		if (org_status==200):
+
+			data["login"] = org_data["login"]
+
+			if("name" in org_data):
+				data["name"] = org_data["name"]
+  
+			data["score"] = len(public_members_response.json()) + org_data["public_repos"]
+
+		return data, org_status
