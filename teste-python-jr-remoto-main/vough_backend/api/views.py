@@ -69,12 +69,13 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
 			data["login"] = org_data["login"]
 
-			if("name" in org_data):
+			if(("name" in org_data) & (org_data["name"] is not None)):
+				
 				data["name"] = org_data["name"]
-
+				
 			else:
 				data["name"]=""
-  
+
 			data["score"] = len(public_members) + org_data["public_repos"]
 
 		return data, org_status
