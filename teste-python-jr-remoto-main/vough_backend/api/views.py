@@ -29,7 +29,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 			try:
 				org =  models.Organization.objects.get(pk=org_inf['login'])
 				org.score = org_inf['score']
-				org.name = org_inf['name']
+				org.name = org_inf["name"]
 				org.save()
 				
 			except models.Organization.DoesNotExist :
@@ -58,18 +58,16 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 		public_members = github.get_organization_public_members(login)
 		org_data = org_response.json()
 		org_status= org_response.status_code
-		data = {}
+		data = {"login":"","name":"","score":0}
 
 		if (org_status==200):
 
 			data["login"] = org_data["login"]
 
-			if(("name" in org_data) & (org_data["name"] is not None)):
-				
-				data["name"] = org_data["name"]
-				
-			else:
-				data["name"]=""
+			if("name" in org_data):
+				if(org_data["name"] is not None):
+					
+					data["name"] = org_data["name"]
 
 			data["score"] = len(public_members) + org_data["public_repos"]
 
