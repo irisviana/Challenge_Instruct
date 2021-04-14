@@ -9,14 +9,14 @@ Execução do teste base com o k6:
 
 ## INSTRUÇÕES DE COMO EXECUTAR A APLICAÇÃO E OS TESTES.
 - Clonar o repositório: git clone https://github.com/irisviana/Challenge_Instruct.git
-- Depois de clonar, para executar é necessário navegar no terminal ou onde você executa os programas, Challenge_Instruct/teste-python-jr-remoto-main/vough_backend/
-    -Rodar aplicação:
-      -Execute, python manage.py makemigrations
-      -Execute, python manage.py migrate
-      -Execute, python manage.py runserver
-      -Copie http://127.0.0.1:8000/ e cole no browser
-     -Rodar os testes de unidade:
-        -Execute, python manage.py test
+- Depois de clonar, para executar é necessário navegar no terminal ou onde você executa os programas, Challenge_Instruct/teste-python-jr-remoto-main/vough_backend/ 
+-Rodar aplicação:
+    -Execute, python manage.py makemigrations.
+    -Execute, python manage.py migrate.
+    -Execute, python manage.py runserver.
+    -Copie http://127.0.0.1:8000/ e cole no browser.
+-Rodar os testes de unidade:
+    -Execute, python manage.py test 
  
 ## RESOLUÇÃO DA IMPLEMENTAÇÃO
 A solução final do teste pode ser dividida em quatro partes, integração da Vough API com a API do Github, implementação dos endpoints,testes de unidade e documentação da Vough API.
@@ -25,8 +25,7 @@ A solução final do teste pode ser dividida em quatro partes, integração da V
 ```
 /vough_backend/api/integrations/github.py
 ```
--Foi complementado as funções já existentes na API base disponibilizada.
--Na função get_organization_public_members foi tomado cuidados para que o número de mebros públicos fossem capturados corretamente, utilizando paginação no request.
+Foi complementado as funções já existentes na API base disponibilizada. Na função get_organization_public_members foi tomado cuidados para que o número de mebros públicos fossem capturados corretamente, utilizando paginação no request.
 
 ```
 import os
@@ -69,9 +68,7 @@ class GithubApi:
 ```
 /vough_backend/api/views.py
 ```
--Foi implementado uma função chamada get_info_github_api_organization que busca informações da api do github e retornar o dado encontrado e o status da requisição.
--Foi tomado cuidados em possiveis errors no banco de dados causados por organização sem nome ou nome null.
--Foi calculado o score e adicionado diretamente no dicionário data.
+Foi implementado uma função chamada get_info_github_api_organization que busca informações da api do github e retornar o dado encontrado e o status da requisição.Foi tomado cuidados em possiveis errors no banco de dados causados por organização sem nome ou nome null e também foi calculado o score e adicionado diretamente no dicionário data.
 
 ```
 def get_info_github_api_organization(self, login: str) -> (dict, int):
@@ -126,7 +123,7 @@ def retrieve(self, request, login=None):
 
         return Response(serialized_org, status=org_status)
 ```
-Foi sobrescrito a função get_queryset, para retornar os dados ordenados pelo maior score
+Foi sobrescrito a função get_queryset, para retornar os dados ordenados pelo maior score.
 ```
 def get_queryset(self):
         """Retornar os dados de organizações ordenados pelo score na listagem da API
@@ -139,7 +136,7 @@ def get_queryset(self):
 ```
 \vough_backend\api\tests
 ```
--Foi criado 4 testes de model;
+Foi criado 4 testes de model
 ```
 from django.test import TestCase
 from api import models
@@ -173,7 +170,7 @@ class OrganizationTest(TestCase):
         login='login_new_org', name='new_org',score=100)
         self.assertEqual(new_org.login,'login_new_org')
 ```
--Foi criado 8 de views.
+Foi criado 8 de views.
 ```
 from django.urls import reverse
 from api .models import Organization
@@ -238,7 +235,7 @@ class TestOrganizationView(APITestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 ```
 ### Documentação da Vough API.
--Foi usado Swagger
+Foi usado Swagger.
 ```
 from django.contrib import admin
 from django.urls import path, include
