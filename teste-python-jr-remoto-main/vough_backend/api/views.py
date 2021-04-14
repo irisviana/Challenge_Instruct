@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import Response
 from api import models, serializers
 from api.integrations.github import GithubApi
-from django.db import IntegrityError
+
 # TODOS:
 # 1 - Buscar organização pelo login através da API do Github
 # 2 - Armazenar os dados atualizados da organização no banco
@@ -12,17 +12,13 @@ from django.db import IntegrityError
 
 class OrganizationViewSet(viewsets.ModelViewSet):
 
-	#queryset = models.Organization.objects.all()
 	serializer_class = serializers.OrganizationSerializer
 	lookup_field = "login"
 	http_method_names = ["get","delete"]
 
-
-
 	def retrieve(self, request, login=None):
 		"""
-		   Armazenar os dados atualizados da organização no banco e
-
+			Armazenar os dados atualizados da organização no banco e
 		   Retornar corretamente os dados da organização
         """
 
@@ -51,7 +47,6 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 		
 		return models.Organization.objects.all().order_by('-score')
 	 	
-
 	def get_info_github_api_organization(self, login: str) -> (dict, int):
 		"""Buscar organização e mebros da organização pelo login através da API do Github
 
