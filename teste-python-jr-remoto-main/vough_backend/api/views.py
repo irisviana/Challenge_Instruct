@@ -12,63 +12,61 @@ from api.integrations.github import GithubApi
 
 class OrganizationViewSet(viewsets.ModelViewSet):
 
-	serializer_class = serializers.OrganizationSerializer
-	lookup_field = "login"
-	http_method_names = ["get","delete"]
+    serializer_class = serializers.OrganizationSerializer
+    lookup_field = "login"
+    http_method_names = ["get", "delete"]
 
-	def retrieve(self, request, login=None):
-		"""
-			Armazenar os dados atualizados da organização no banco e
-		   Retornar corretamente os dados da organização
+    def retrieve(self, request, login=None):
+        """Armazenar os dados atualizados da organização no banco e
+        Retornar corretamente os dados da organização
         """
 
-		org_inf, org_status = self.get_info_github_api_organization(login)
-		serialized_org = {}
-  
-		if (org_status==200):
-			try:
-				org =  models.Organization.objects.get(pk=org_inf['login'])
-				org.score = org_inf['score']
-				org.name = org_inf["name"]
-				org.save()
-				
-			except models.Organization.DoesNotExist :
-				org= models.Organization.objects.create(**org_inf)
+        org_inf, org_status = self.get_info_github_api_organization(login)
+        serialized_org = {}
 
-			serializer = self.serializer_class(org)
-			serialized_org = serializer.data
+        if (org_status == 200):
+            try:
+                org = models.Organization.objects.get(pk=org_inf['login'])
+                org.score = org_inf['score']
+                org.name = org_inf["name"]
+                org.save()
 
-		return Response(serialized_org, status=org_status)
+            except models.Organization.DoesNotExist:
+                org = models.Organization.objects.create(**org_inf)
 
-	def get_queryset(self):
-		"""
-			Retornar os dados de organizações ordenados pelo score na listagem da API
-		"""
-		
-		return models.Organization.objects.all().order_by('-score')
-	 	
-	def get_info_github_api_organization(self, login: str) -> (dict, int):
-		"""Buscar organização e mebros da organização pelo login através da API do Github
+            serializer = self.serializer_class(org)
+            serialized_org = serializer.data
 
+        return Response(serialized_org, status=org_status)
+
+    def get_queryset(self):
+        """Retornar os dados de organizações ordenados pelo score na listagem da API
+        """
+
+        return models.Organization.objects.all().order_by('-score')
+
+    def get_info_github_api_organization(self, login: str) -> (dict, int):
+        """Buscar organização e mebros da organização pelo login através da API do Github
         :login: login da organização no Github
         """
-        
-		github = GithubApi()
-		org_response = github.get_organization(login)
-		public_members = github.get_organization_public_members(login)
-		org_data = org_response.json()
-		org_status= org_response.status_code
-		data = {"login":"","name":"","score":0}
 
-		if (org_status==200):
+        github = GithubApi()
+        org_response = github.get_organization(login)
+        public_members = github.get_organization_public_members(login)
+        org_data = org_response.json()
+        org_status = org_response.status_code
+        data = {"login": "", "name": "", "score": 0}
 
-			data["login"] = org_data["login"]
+        if (org_status == 200):
 
-			if("name" in org_data):
-				if(org_data["name"] is not None):
-					
-					data["name"] = org_data["name"]
+            data["login"] = org_data["login"]
 
-			data["score"] = len(public_members) + org_data["public_repos"]
+            if("name" in org_data):
+                
+                if(org_data["name"] is not None):
 
-		return data, org_status
+                    data["name"] = org_data["name"]
+
+            data["score"] = len(public_members) + org_data["public_repos"]
+
+        return data, org_status
