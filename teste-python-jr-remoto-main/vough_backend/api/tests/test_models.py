@@ -10,17 +10,17 @@ class OrganizationTest(TestCase):
         self.org=models.Organization.objects.create(
             login='logintest', name='test',score=10)
 
-    def test_get_existent_org(self):
+    def test_get_existent_org_successfully(self):
         org = models.Organization.objects.get(login='logintest')
         self.assertEqual(
             org.login, "logintest")
 
-    def test_update_org_name(self):
+    def test_update_org_name_successfully(self):
         self.org.name = 'new test name'
         self.org.save()
         self.assertEqual(self.org.name, 'new test name')
 
-    def test_update_org_score(self):
+    def test_update_org_score_successfully(self):
         self.org.score =20
         self.org.save()
         self.assertEqual(self.org.score, 20)
