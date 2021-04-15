@@ -4,20 +4,21 @@ Clique [aqui](https://github.com/instruct-br/teste-python-jr-remoto) para observ
 
 Clique [aqui](http://vough-api-iris.herokuapp.com/) para vizualizar a Vough API no Heroku
 
-Execução do teste base com o k6:
--Foi baixado o binário para o windows e executado o comando k6 run -e API_BASE=http://localhost:8000/ tests-open.js em Challenge_Instruct\teste-python-jr-remoto-main
-
 ## INSTRUÇÕES DE COMO EXECUTAR A APLICAÇÃO E OS TESTES.
 - Clonar o repositório: git clone https://github.com/irisviana/Challenge_Instruct.git
 - Depois de clonar, para executar é necessário navegar no terminal ou onde você executa os programas, Challenge_Instruct/teste-python-jr-remoto-main/vough_backend/ 
 - Rodar aplicação:
     - Execute, pip install -r requirements.txt
-    - Execute, python manage.py makemigrations.
-    - Execute, python manage.py migrate.
-    - Execute, python manage.py runserver.
-    - Copie http://127.0.0.1:8000/ e cole no browser.
+    - Execute, python manage.py makemigrations
+    - Execute, python manage.py migrate
+    - Execute, python manage.py runserver
+    - Copie http://127.0.0.1:8000/ e cole no browser
 - Rodar os testes de unidade:
     - Execute, python manage.py test 
+- Execução do teste base com o k6:
+    - Execute, python manage.py runserver
+    - Execute o comando k6 run -e API_BASE=http://localhost:8000/ tests-open.js em Challenge_Instruct\teste-python-jr-remoto-main
+
  
 ## RESOLUÇÃO DA IMPLEMENTAÇÃO
 A solução final do teste pode ser dividida em quatro partes, integração da Vough API com a API do Github, implementação dos endpoints,testes de unidade e documentação da Vough API.
