@@ -1,6 +1,5 @@
-# Teste Técnico Desenvolvedor(a) Python Júnior [REMOTO] da [Instruct](https://instruct.com.br/)!
+# Django rest framework
 
-Clique [aqui](https://github.com/instruct-br/teste-python-jr-remoto) para observar o enunciado original do teste:
 
 Clique [aqui](http://vough-api-iris.herokuapp.com/) para vizualizar a Vough API no Heroku
 
